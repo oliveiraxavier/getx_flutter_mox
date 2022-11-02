@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:getx_intro/value_controller.dart';
+import 'package:getx_intro/user_controller.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,55 +15,129 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  HomePage({Key? key}) : super(key: key);
 
-  final textController = TextEditingController();
+  final nameController = TextEditingController();
+  final ageController = TextEditingController();
 
-  final valueController = ValueController();
+  final userController = UserController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            //Valor
-            GetX<ValueController>(
-              init: valueController,
-              builder: (controller) {
-                return Text('Valor definido: ${controller.definedValue.value}');
-              },
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Campo de nome
+                Expanded(
+                  child: TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome',
+                    ),
+                  ),
+                ),
+
+                // Botão para salvar o nome
+                ElevatedButton(
+                  onPressed: () {
+                    userController.setUserName(nameController.text);
+                  },
+                  child: const Text('Salvar'),
+                ),
+              ],
             ),
 
-            //Campo
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32.0),
-              child: TextField(
-                controller: textController,
-              ),
+            // Espaçamento
+            const SizedBox(height: 10),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Campo de idade
+                Expanded(
+                  child: TextField(
+                    controller: ageController,
+                    decoration: const InputDecoration(
+                      labelText: 'Idade',
+                    ),
+                  ),
+                ),
+
+                // Botão para salvar a idade
+                ElevatedButton(
+                  onPressed: () {
+                    userController.setUserAge(int.parse(ageController.text));
+                  },
+                  child: const Text('Salvar'),
+                ),
+              ],
             ),
 
-            //Botão
-            GetX<ValueController>(
-              init: valueController,
-              builder: (controller) {
-                return controller.isLoading.value
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: () {
-                          valueController.setValue(textController.text);
-                        },
-                        child: const Text('Confirmar'),
-                      );
+            // Espaçamento
+            const SizedBox(height: 10),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const DataScreen();
+                    },
+                  ),
+                );
               },
+              child: const Text('Tela de dados'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DataScreen extends StatelessWidget {
+  const DataScreen({
+    Key? key,
+  }) : super(key: key);
+
+  TextStyle commonStyle() => const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dados'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Apresentação do nome
+            Text(
+              'Nome: ',
+              style: commonStyle(),
+            ),
+
+            // Apresentação da idade
+            Text(
+              'idade: ',
+              style: commonStyle(),
             ),
           ],
         ),
