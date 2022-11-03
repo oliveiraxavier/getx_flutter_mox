@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:getx_intro/user_controller.dart';
 
 void main() {
+  Get.lazyPut<UserController>(() => UserController());
   runApp(const MyApp());
 }
 
@@ -26,7 +29,7 @@ class HomePage extends StatelessWidget {
   final nameController = TextEditingController();
   final ageController = TextEditingController();
 
-  final userController = UserController();
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +72,10 @@ class HomePage extends StatelessWidget {
                 // Campo de idade
                 Expanded(
                   child: TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
                     controller: ageController,
                     decoration: const InputDecoration(
                       labelText: 'Idade',
@@ -94,7 +101,7 @@ class HomePage extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) {
-                      return const DataScreen();
+                      return DataScreen();
                     },
                   ),
                 );
@@ -109,7 +116,7 @@ class HomePage extends StatelessWidget {
 }
 
 class DataScreen extends StatelessWidget {
-  const DataScreen({
+  DataScreen({
     Key? key,
   }) : super(key: key);
 
@@ -117,6 +124,8 @@ class DataScreen extends StatelessWidget {
         fontSize: 20,
         fontWeight: FontWeight.w700,
       );
+
+  final UserController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -130,13 +139,13 @@ class DataScreen extends StatelessWidget {
           children: [
             // Apresentação do nome
             Text(
-              'Nome: ',
+              'Nome: ${controller.user.value.name}',
               style: commonStyle(),
             ),
 
             // Apresentação da idade
             Text(
-              'idade: ',
+              'idade: ${controller.user.value.age}',
               style: commonStyle(),
             ),
           ],
